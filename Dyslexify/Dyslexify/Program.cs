@@ -1,40 +1,45 @@
-﻿using Console_Exts;
-using System;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Dyslexify
 {
-
     public class Program
     {
-        static String boldString(String text)
+        static string BoldString(string text)
         {
-            text = "A bunch of random words strung together";
-            //split the text into an array of strings
-            String[] words = text.Split(" ");
+            string[] words = Regex.Split(text, @"[\s\r,.\?]+");
 
-            //iterate through array of strings
             for (int i = 0; i < words.Length; i++)
             {
-                // assign word at index to a variable
-                String word = words[i];
-                //get half
-                int halfWay = word.Length / 2;
+                string word = words[i];
+                int halfway = word.Length / 2;
                 bool isOdd = word.Length % 2 != 0;
 
-                String firstHalf = word.Substring(0, halfWay + (isOdd ? 1: 0));
-                String secondHalf = word.Substring(halfWay);
+                string firstHalf = word.Substring(0, halfway + (isOdd ? 1 : 0));
+                string secondHalf = word.Substring(halfway);
 
                 words[i] = $"\u001b[1m{firstHalf}\u001b[0m{secondHalf}";
-
             }
 
             return string.Join(" ", words);
         }
+
         public static void Main(string[] args)
         {
-            
-            Console.Out.WriteLine(boldString("A Random bunch of text strung together"));
-        }
-    }
 
+            while (true)
+            {
+                Console.WriteLine("Please enter the text to convert");
+                string text = Console.ReadLine();
+
+                if (text == "quit")
+                {
+                   Environment.Exit(-1);
+                }
+                Console.WriteLine(BoldString(text));
+
+            }
+        }
+           
+    }
 }
