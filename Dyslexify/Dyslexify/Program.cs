@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using System.IO;
-
+﻿using System.Text.RegularExpressions;
 
 namespace Dyslexify
 {
@@ -12,12 +9,12 @@ namespace Dyslexify
         {
             //create an array of words which uses regex
             //to split words after any punctuation
-             String[] words = Regex.Split(text, @"[\s\r,.\?]+");
+            String[] words = Regex.Split(text, @"[\s\r,.\?]+");
 
             //iterate through array words
             for (int i = 0; i < words.Length; i++)
             {
-    
+
                 //assign word at each index to a variable
                 string word = words[i];
                 //figure out if the amount of characters is odd or even
@@ -26,9 +23,9 @@ namespace Dyslexify
                 //figure out how far half way of word, checks if odd returns
                 //incremented value or 0 
                 int halfway = word.Length / 2 + (isOdd ? 1 : 0);
-               
+
                 //get the first half of the word 
-                string firstHalf = word.Substring(0, halfway );
+                string firstHalf = word.Substring(0, halfway);
                 //get the second half of the word
                 string secondHalf = word.Substring(halfway);
                 // When assigning each word to index,
@@ -43,28 +40,31 @@ namespace Dyslexify
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter(path))
-                {
-                    sw.WriteLine("<html>");
-                    sw.WriteLine("<head>");
-                    sw.WriteLine("<style>");
-                    sw.WriteLine("body { font-weight: bold; }");
-                    sw.WriteLine("</style>");
-                    sw.WriteLine("</head>");
-                    sw.WriteLine("<body>");
-                    sw.WriteLine(BoldString(text));
-                    sw.WriteLine("</body>");
-                    sw.WriteLine("</html>");
-                }
-            }catch (Exception e)
+
+                text = "<html>\n<head>\n<style>\nbody { font-weight: bold; }\n</style>" +
+                    "</head>\n<body>\n" + BoldString(text) +"\n" + "</body>\n</html>";
+
+                MakeDocument(text);
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
         }
+        static void MakeDocument(String text)
+        {
+            ChromePdfRenderer chromeRenderer = new ChromePdfRenderer();
+            PdfDocument pdf = chromeRenderer.RenderHtmlAsPdf(text);
+            pdf.SaveAs("pdfExample.pdf");
+            //String path = "C:\\Users\\libro\\source\\repos\\NewRepo\\Dyslexify\\Dyslexify\\word.docx";
+
+
+
+        }
         public static void Main(string[] args)
         {
             string path = "C:\\Users\\libro\\source\\repos\\NewRepo\\Dyslexify\\Dyslexify\\file.html";
-            
+
             while (true)
             {
                 Console.WriteLine("Please enter the text to convert");
@@ -72,16 +72,18 @@ namespace Dyslexify
 
                 if (text == "quit")
                 {
-                   Environment.Exit(-1);
+                    break;
+                    Environment.Exit(-1);
                 }
                 Console.WriteLine(BoldString(text));
                 createFile(path, BoldString(text));
 
-               
-              
+                ChromePdfRenderer chromeRenderer = new ChromePdfRenderer();
+                PdfDocument pdf = chromeRenderer.RenderHtmlAsPdf(text);
+                pdf.SaveAs("pdfExample.pdf");
 
             }
         }
-           
+
     }
 }
